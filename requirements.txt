@@ -1,0 +1,10 @@
+pywin32
+pyrebase
+comtypes
+docx2pdf
+pylint
+pdf2docx
+django
+pillow
+whitenoise
+djangorestframework

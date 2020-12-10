@@ -1,0 +1,65 @@
+{% extends 'basic.html' %}
+{%load static%}
+{%block style%}
+    <link rel="stylesheet" href="{%static 'css/pdfandword.css'%}">
+{%endblock%}
+{%block main%}
+<div class="box">
+    <h1>WORD TO PDF</h1>
+    <div class="inputfields">
+        <form method="POST" class="post-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input name="word" type="file"/>
+            <button id="upload" type="submit" onclick="giveMessage()">Convert</button>
+        </form>
+    </div>
+    <div class="downloadpdf">
+        {%if url%}
+         <a href="{{url}}">Download</a>
+        {%endif%}
+    </div>
+</div>
+{%endblock%}
+{%block javascript%}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+    function giveMessage(){
+        alert('server serving please wait...')
+    }
+    function makegetrequest() {
+        var url = "{%url 'doctopdf'%}"
+        alert(url);
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                return true;
+            }
+            else if (this.readyState == 4 && this.status == 404) {
+                return false;
+            }
+        };
+        xhttp.open("GET", url, true);
+        xhttp.send();
+    }
+    function makepostrequest() {
+            $.ajax({
+                type: "POST",
+                url: "{%url 'providelink'%}",
+                headers: {
+                    "Content-Type": "application/json",
+                    "HTTP_GROUP_NAME": "groups_name",
+                },
+                data: {
+                    "csrfmiddlewaretoken": "{{csrf_token}}",
+                },
+                success: function (data) {
+                    console.log("success");
+                    console.log(data);
+                },
+                failure: function (data) {
+                    console.log("failure");
+                    console.log(data);
+                },
+            });
+    }
+</script>
+{%endblock%}

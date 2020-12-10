@@ -1,0 +1,17 @@
+{% extends 'basic.html' %}
+{%load static%}
+{%block style%}
+    <link rel="stylesheet" href="{%static 'css/pdfandword.css'%}">
+{%endblock%}
+{%block main%}
+ <div class="box">
+     <h1>PDF TO WORD</h1>
+     <div class="inputfields">
+        <form method="POST" class="post-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input name="pdf" type="file" accept="application/pdf" />
+            <button id="upload" type="submit" class="save btn btn-default">Convert</button>
+        </form>
+     </div>
+ </div>
+{%endblock%}
