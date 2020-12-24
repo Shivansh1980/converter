@@ -1,0 +1,16 @@
+{%extends 'basic.html'%}
+{%load static%}
+
+{%block style%}
+<link rel="stylesheet" href="{%static 'css/converterhome.css'%}">
+{%endblock%}
+
+{%block main%}
+<div class="converterhome">
+    <h1>WELCOME TO THE CONVERTER</h1>
+    <div class="homelinks">
+        <a href="{%url 'pdfdochome'%}">1. Convert Document OR PDF </a>
+        <a href="{%url 'pdfdochome'%}">2. Convert Image And PDF </a>
+    </div>
+</div>
+{%endblock%}

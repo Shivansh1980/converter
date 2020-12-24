@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 urlpatterns = [
+    path('',views.pdfdochome,name='pdfdochome'),
     path('pdftoword/', views.pdftodoc, name = 'pdftodoc'),
     path('wordtopdf/', views.doctopdf, name = 'doctopdf'),
     path('providelink/',views.providelink,name='providelink')

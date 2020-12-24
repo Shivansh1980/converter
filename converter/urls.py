@@ -17,10 +17,10 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from . import settings
-from . import views
+from converter import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.home,name='home'),
-    path('PDFandDOC/',include('PDFandDOC.urls'))
+    path('pdfdoc/',include('pdfdoc.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

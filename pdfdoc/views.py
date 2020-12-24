@@ -26,6 +26,13 @@ config = {
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 
+storage = firebase.storage()
+path_on_cloud = "images"
+path_on_local = settings.MEDIA_ROOT
+
+def pdfdochome(request):
+    return render(request,'pdfanddoc/pdfdoc.html')
+
 def pdftodoc(request):
     params = {'status': False}
     if (request.method == 'POST'):
@@ -50,10 +57,13 @@ def doctopdf(request):
         print('\n\nlocation is : ', fs.location)
         pythoncom.CoInitialize()
         filename = str(upload_file.name)
-        print(filename)
-
-        path = settings.MEDIA_ROOT+filename
+        print("FileName is : ",filename)
+        path = settings.MEDIA_ROOT + filename
         print(path)
+
+        #storage.child(path_on_cloud+f"/{filename}").put(path)
+
+
         dest = settings.MEDIA_ROOT+filename[0:-5]+'output.pdf'
 
         convert(path, dest)
@@ -64,6 +74,7 @@ def doctopdf(request):
         os.remove(path)
         x = str(f"/static/media/{output}")
         params['url'] = x
+
     return render(request, "pdfanddoc/wordtopdf.html",params)
     
 def providelink(request, id):

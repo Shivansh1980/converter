@@ -1,0 +1,16 @@
+{%extends 'basic.html'%}
+{%load static%}
+{%block style%}
+<link rel="stylesheet" href="{%static 'css/pdfandword.css'%}">
+{%endblock%}
+{%block main%}
+<div class="box">
+    <h1>
+        WELCOME TO THE BEST DOCUMENT CONVERTER
+    </h1>
+    <div class="pdfdoc">
+        <a href="{%url 'pdftodoc'%}">Convert PDF TO DOCX</a>
+        <a href="{%url 'doctopdf'%}">Convert DOCX TO PDF</a>
+    </div>
+</div>
+{%endblock%}

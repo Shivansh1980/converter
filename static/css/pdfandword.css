@@ -23,9 +23,35 @@
 }
 
 .downloadpdf a{
-    margin-top: 5px;
     display: block;
-    font-size: 25px;
-    background-color: green;
+    margin: 10px;
+    font-size: 30px;
+    background-color: black;
     font-weight: bold;
+    color:white;
+    padding: 5px;
+    text-decoration: none;
+    border-radius: 7px;
+}
+
+.downloadpdf a:hover{
+    background-color: blue;
+    color:black;
+}
+
+.pdfdoc{
+    background-color: white;
+}
+.pdfdoc a{
+    font-size: 30px;
+    text-decoration: none;
+    color: black;
+    display: block;
+    margin: 10px;
+    background-color: chartreuse;
+    padding: 5px;
+}
+.pdfdoc a:hover{
+    background-color: black;
+    color: white;
 }
