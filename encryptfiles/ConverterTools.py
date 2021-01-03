@@ -40,29 +40,29 @@ def load_key():
     return open("key.key", "rb").read()
 
 
-def encryptPdf(filename, key):
+def encryptFile(filepath, key):
     f = Fernet(key)
-    with open(filename, "rb") as file:
+    with open(filepath, "rb") as file:
         # read all file data
         file_data = file.read()
     encrypted_data = f.encrypt(file_data)
-    with open(filename, "wb") as file:
+    with open(filepath, "wb") as file:
         file.write(encrypted_data)
     
 
-def decryptFile(filename, key):
+def decryptFile(filepath, key):
     f = Fernet(key)
-    with open(filename, "rb") as file:
+    with open(filepath, "rb") as file:
         # read the encrypted data
         encrypted_data = file.read()
     # decrypt data
     decrypted_data = f.decrypt(encrypted_data)
     # write the original file
-    with open(filename, "wb") as file:
+    with open(filepath, "wb") as file:
         file.write(decrypted_data)
 
 # downloadFile("https://storage.googleapis.com/a2p-v2-storage/97005083-c8fa-44ef-8abc-a34f813ff401","file")
 # write_key()
-k = load_key()
+#k = load_key()
 #encryptPdf("file.pdf", k)
-decryptFile("file.pdf",k)
+#decryptFile("file.pdf",k)

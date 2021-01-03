@@ -1,0 +1,21 @@
+{%extends 'basic.html'%}
+{%block main%}
+<div class="encryption">
+    <form method="post" enctype="multipart/form-data">
+        {%csrf_token%}
+        <h1 align="center">Encrypt Your File</h1>
+        <div style="margin: 10px; margin-bottom:10px;">
+            <label for="" style="font-size: 25px;">Enter Your Name</label>
+            <input id="username" align="center" type="email" name="email" >
+        </div>
+
+        <input type="file" name="myfile">
+        <input type="submit" value="Encrypt">
+    </form>
+    {%if file%}
+        <div>
+            <a id="enc-download" href={{file}}>Download</a>
+        </div>
+    {%endif%}
+</div>
+{%endblock%}

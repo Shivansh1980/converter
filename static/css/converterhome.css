@@ -7,6 +7,23 @@
     background-color: yellow;
     color:darkblue;
     font-weight: bolder;
+    margin-top: 50px;
+}
+#heading {
+    font-weight: bolder;
+    text-shadow: 0 0 10px red;
+    animation: headinganimation 2s infinite;
+}
+@keyframes headinganimation{
+    0%{
+        color: green;
+    }
+    50%{
+        color: red;
+    }
+    100%{
+        color: blue;
+    }
 }
 .homelinks{
     display: flex;

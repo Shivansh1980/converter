@@ -22,5 +22,6 @@ from converter import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.home,name='home'),
-    path('pdfdoc/',include('pdfdoc.urls'))
+    path('pdfdoc/', include('pdfdoc.urls')),
+    path('encryptfiles/',include('encryptfiles.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
