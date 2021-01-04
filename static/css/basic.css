@@ -129,6 +129,9 @@ li,a,button{
     padding: 5px;
     color: black;
 }
+.downloadButtonContainer{
+    display: none;
+}
 #enc-download{
     display: block;
     background-color:black;

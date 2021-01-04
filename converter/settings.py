@@ -26,6 +26,8 @@ SECRET_KEY = '#dtt#e0yop^^var^znbyvyu2m-^wua52v*fnof#*(a61)c-*5+'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+#you have defined this hostname to provide the download url using ajax
+HOST_NAME = "127.0.0.1"
 
 # Application definition
 

@@ -60,9 +60,3 @@ def decryptFile(filepath, key):
     # write the original file
     with open(filepath, "wb") as file:
         file.write(decrypted_data)
-
-# downloadFile("https://storage.googleapis.com/a2p-v2-storage/97005083-c8fa-44ef-8abc-a34f813ff401","file")
-# write_key()
-#k = load_key()
-#encryptPdf("file.pdf", k)
-#decryptFile("file.pdf",k)
