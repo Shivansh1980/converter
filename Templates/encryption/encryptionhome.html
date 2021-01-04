@@ -1,21 +1,158 @@
 {%extends 'basic.html'%}
 {%block main%}
-<div class="encryption">
-    <form method="post" enctype="multipart/form-data">
+<!-- <div class="encryption">
+    <form method="POST" enctype="multipart/form-data">
         {%csrf_token%}
         <h1 align="center">Encrypt Your File</h1>
         <div style="margin: 10px; margin-bottom:10px;">
-            <label for="" style="font-size: 25px;">Enter Your Name</label>
-            <input id="username" align="center" type="email" name="email" >
+            <label for="" style="font-size: 25px;">Enter Your Email: </label>
+            <input id="useremail" align="center" type="email" name="email" >
         </div>
 
-        <input type="file" name="myfile">
-        <input type="submit" value="Encrypt">
+        <input id="inputFile" type="file" name="myfile">
+        <input id="submit" name="submit" type="submit" value="Encrypt">
+        <button id="submit">Encrypt</button>
     </form>
-    {%if file%}
+    {%if downloadurl%}
         <div>
-            <a id="enc-download" href={{file}}>Download</a>
+            <a id="enc-download" href={{downloadurl}} download>Download</a>
         </div>
+        <script>alert("Encryption Successfull")</script>
+    {%endif%}
+</div> -->
+<div class="encryption">
+    <form id="ajax-form" method="POST" enctype="multipart/form-data" novalidate="">
+        {%csrf_token%}
+        <h1 align="center">Encrypt Your File</h1>
+        <div style="margin: 10px; margin-bottom:10px;">
+            <label for="" style="font-size: 25px;">Enter Your Email: </label>
+            {{form.useremail}}
+        </div>
+
+        {{form.file}}
+        <!-- <input id="submit" name="submit" type="submit" value="Encrypt"> -->
+        <input type="submit">
+    </form>
+    {%if downloadurl%}
+    <div>
+        <a id="enc-download" href={{downloadurl}} download>Download</a>
+    </div>
+    <script>alert("Encryption Successfull")</script>
     {%endif%}
 </div>
+{%endblock%}
+{%block javascript%}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    $('#ajax-form').submit(function (e) {
+        e.preventDefault();
+        $form = $(this)
+        var formData = new FormData(this);
+        for (var f of formData){
+            console.log(f);
+        }
+        alert(formData);
+        $.ajax({
+            url: "{%url 'encryptfile'%}",
+            data: formData,
+            type: 'POST',
+            success: function (response) {
+                console.log(response)
+                if (response.error) {
+                    $.each(response.errors, function (name, error) {
+                        error = '<small class="text-muted error">' + error + '</small>'
+                        $form.find('[name=' + name + ']').after(error);
+                    })
+                }
+                else {
+                    alert(response.msg)
+                }
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+        e.preventDefault();
+    });
+</script>
+<!-- <script>
+    $('#ajax-form').submit(function (e) {
+        e.preventDefault();
+        var data = new FormData();
+        jQuery.each(jQuery('#inputFile')[0].files, function (i, file) {
+            data.append('file-' + i, file);
+            console.log('file-' + i, " : ", file);
+        });
+
+        $.ajax({
+            url: "{%url 'encryptfile'%}",
+            data: data,
+            cache: false,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function (data) {
+                alert(data);
+            }
+        });
+    });
+</script> -->
+
+<!-- <script>
+    var file = null;
+    $('input[type="file"]').change(function (e) {
+    var fileName = e.target.files[0].name;
+    file = e.target.files[0];
+    alert('The file "' + fileName + '" has been selected.');
+    });
+    var file = $('input[name="myfile]').get(0).files[0];
+        var filelength = document.getElementById("file").files.length;
+        var useremail = $('input[name="useremail"]').val();
+
+        if (useremail == "" || filelength == 0) {
+            alert("Please give email and password");
+            return false;
+        }
+
+        var formData = new FormData();
+        formData.append('file', file);
+        formData.append('useremail', useremail);
+        alert(formData);
+</script> -->
+<!-- <script>
+    function encryptRequestUsingJquery(){
+        alert("worked");
+        $.ajax({
+            method: "POST",
+            url: "{% url 'encryptfile' %}",
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            dataType: 'json',
+            data: formData,
+        }).fail(function (message) {
+                alert('error');
+            })
+            .done(function (data) {
+                alert("successfull");
+                alert(data);
+            });
+    };
+</script> -->
+<!-- <script>
+    $('#submit').click(function(e) {
+        e.preventDefault();
+        console.log("worked");
+        const useremail = $('#useremail').val();
+        const inputFile = document.getElementById("inputFile");
+        const xhr = new XMLHttpRequest();
+        const formData = new FormData();
+        const f = inputFile.files[0];
+        console.log("your file : ",f);
+        formData.append('myfile', f, f.name);
+        formData.append('useremail', useremail);
+        console.log("Your Form Data : ", formData['myfile']);
+        xhr.open("post","{%url 'encryptfile'%}");
+        xhr.send(formData);
+    });
+</script> -->
 {%endblock%}
