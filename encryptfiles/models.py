@@ -1,5 +1,6 @@
 from django.db import models
 from converter.settings import MEDIA_ROOT
+from .storage import OverwriteStorage
 # Create your models here.
 class EncryptedFile(models.Model):
     file = models.FileField(upload_to=MEDIA_ROOT)

@@ -50,8 +50,12 @@ def fileEncryptGetRequest(request):
     if (request.method == "POST"):
         form = EncryptedFileForm(request.POST, request.FILES)
         if form.is_valid():
-            
             file = request.FILES['file']
+            path = settings.MEDIA_ROOT + file.name
+            print(path)
+            while (os.path.exists(path)):
+                print("File Exists : ",path)
+                os.remove(path)
             encryptionResult = getEncryptionResult(request, file)
 
             encryptFile = EncryptedFile(
@@ -61,6 +65,7 @@ def fileEncryptGetRequest(request):
                 filename=file.name,
                 file=file
             )
+            encryptFile.save()
 
             result['msg'] = 'File Encryption Successfull'
             result['error'] = False
