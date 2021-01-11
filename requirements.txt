@@ -1,6 +1,4 @@
-pywin32
 pyrebase
-comtypes
 docx2pdf
 pylint
 pdf2docx
@@ -9,4 +7,3 @@ pillow
 whitenoise
 djangorestframework
 cryptography
-api2pdf
