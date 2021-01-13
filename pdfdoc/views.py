@@ -44,9 +44,10 @@ def pdftodoc(request):
 
 
 def doctopdf(request):
-    res = {'status':False}
+    res = {'status':False,'url':None}
     if request.method == 'POST':
         removeFiles(".docx")
+        removeFiles(".pdf")
         upload_file = request.FILES['word']
         fs = FileSystemStorage()
         fs.save(upload_file.name, upload_file)
@@ -54,6 +55,7 @@ def doctopdf(request):
 
         res = DocxToPdf("/static/media")
         #storage.child(path_on_cloud+f"/{filename}").put(path)
+        print("You File Path : ",res)
 
     return render(request, "pdfanddoc/wordtopdf.html", res)
     
