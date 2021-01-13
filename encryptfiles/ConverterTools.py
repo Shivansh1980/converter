@@ -1,6 +1,7 @@
 import requests
 from cryptography.fernet import Fernet
 import os
+from converter import settings
 
 #The Below Api is from url : https://portal.api2pdf.com/
 
@@ -23,7 +24,7 @@ def downloadFile(url,name="output.pdf"):
         f.write(r.content)
 
 def DocxToPdf(current_doc_files):
-    res = {'status':None, 'url':None}
+    res = {'status':None}
 
     current_doc_files = os.getcwd()+current_doc_files
     print("Converting Files In Dir : ", current_doc_files)
@@ -37,14 +38,23 @@ def DocxToPdf(current_doc_files):
                 try:
                     os.system(cmd)
                     res['status'] = True
+                    if (not os.path.exists("/static/media/" + name[0:len(name) - 5] + ".pdf")):
+                        res['status'] = False
+                        return res
                     res['url'] = "/static/media/"+name[0:len(name)-5]+".pdf"
                     print("returning the url : " ,res['url'])
                 except Exception as ex:
                     print("--------Exception--------")
                     res['status'] = False
-                    res['url'] = None
     print("The dictonary is : ", res)
     return res
+
+
+def removeFiles(extension):
+    for dirpath, dirnames, filenames in os.walk(settings.MEDIA_ROOT):
+        for file in filenames:
+            if (file.endswith(extension)):
+                os.remove(os.path.join(dirpath, file))
 
 
 def write_key():
@@ -65,7 +75,6 @@ def encryptFile(filepath, key):
     encrypted_data = f.encrypt(file_data)
     with open(filepath, "wb") as file:
         file.write(encrypted_data)
-    
 
 def decryptFile(filepath, key):
     f = Fernet(key)

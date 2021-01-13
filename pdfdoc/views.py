@@ -4,7 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.core.files.storage import FileSystemStorage
 import os
 import time
-from .ConverterTools import DocxToPdf
+from encryptfiles.ConverterTools import DocxToPdf , removeFiles
 from converter import settings
 import threading
 import time
@@ -41,12 +41,6 @@ def pdftodoc(request):
         return JsonResponse(params)
 
     return render(request, "pdfanddoc/pdftoword.html",params)
-
-def removeFiles(extension):
-    for dirpath, dirnames, filenames in os.walk(settings.MEDIA_ROOT):
-        for file in filenames:
-            if (file.endswith(extension)):
-                os.remove(os.path.join(dirpath, file))
 
 
 def doctopdf(request):
