@@ -6,8 +6,6 @@ import os
 import time
 from docx2pdf import convert
 from converter import settings
-import pythoncom
-import win32com.client
 import threading
 import time
 from fnmatch import fnmatch
@@ -45,7 +43,6 @@ def pdftodoc(request):
     return render(request, "pdfanddoc/pdftoword.html",params)
 
 def doctopdf(request):
-    params = {'status': '#'}
     for dirpath, dirnames, filenames in os.walk(settings.MEDIA_ROOT):
         for file in filenames:
             if (fnmatch(file, '*.pdf')):
@@ -55,27 +52,10 @@ def doctopdf(request):
         fs = FileSystemStorage()
         fs.save(upload_file.name, upload_file)
         print('\n\nlocation is : ', fs.location)
-        pythoncom.CoInitialize()
-        filename = str(upload_file.name)
-        print("FileName is : ",filename)
-        path = settings.MEDIA_ROOT + filename
-        print(path)
 
         #storage.child(path_on_cloud+f"/{filename}").put(path)
 
-
-        dest = settings.MEDIA_ROOT+filename[0:-5]+'output.pdf'
-
-        convert(path, dest)
-
-        print("location : ", fs.location)
-        params['status'] = True
-        output = filename[0:-5] + 'output.pdf'
-        os.remove(path)
-        x = str(f"/static/media/{output}")
-        params['url'] = x
-
-    return render(request, "pdfanddoc/wordtopdf.html",params)
+    return render(request, "pdfanddoc/wordtopdf.html")
     
 def providelink(request, id):
     if (request.method == 'GET'):
