@@ -1,9 +1,8 @@
-from api2pdf import Api2Pdf
 import requests
 from cryptography.fernet import Fernet
+import os
 
 #The Below Api is from url : https://portal.api2pdf.com/
-a2p_client = Api2Pdf('d2cf4a4a-ac62-4e71-b0da-260a68c4418e	')
 
 def downloadFile(url,name="output.pdf"):
     file_url = url
@@ -23,11 +22,29 @@ def downloadFile(url,name="output.pdf"):
         # to a new file in binary mode.
         f.write(r.content)
 
-def convertToPdf(wordFileurl):
-    a2p_client = Api2Pdf('d2cf4a4a-ac62-4e71-b0da-260a68c4418e	')
-    api_response = a2p_client.LibreOffice.convert_from_url(
-        'https://www.api2pdf.com/wp-content/themes/api2pdf/assets/samples/sample-word-doc.docx')
-    print(api_response)
+def DocxToPdf(current_doc_files):
+    res = {'status':None, 'url':None}
+
+    current_doc_files = os.getcwd()+current_doc_files
+    print("Converting Files In Dir : ", current_doc_files)
+    path = None
+    for root, dirs, files in os.walk(current_doc_files, topdown=False):
+        for name in files:
+            if name.endswith(".docx"):
+                path = os.path.join(root,name)
+                cmd = "abiword --to=pdf '{}'".format(path)
+                print("Terminal> ", cmd)
+                try:
+                    os.system(cmd)
+                    res['status'] = True
+                    res['url'] = "/static/media/"+name[0:len(name)-5]+".pdf"
+                    print("returning the url : " ,res['url'])
+                except Exception as ex:
+                    print("--------Exception--------")
+                    res['status'] = False
+                    res['url'] = None
+    print("The dictonary is : ", res)
+    return res
 
 
 def write_key():
@@ -60,3 +77,7 @@ def decryptFile(filepath, key):
     # write the original file
     with open(filepath, "wb") as file:
         file.write(decrypted_data)
+
+def __init__():
+    if __name__ == "__main__":
+        pass

@@ -4,7 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.core.files.storage import FileSystemStorage
 import os
 import time
-from docx2pdf import convert
+from .ConverterTools import DocxToPdf
 from converter import settings
 import threading
 import time
@@ -42,20 +42,26 @@ def pdftodoc(request):
 
     return render(request, "pdfanddoc/pdftoword.html",params)
 
-def doctopdf(request):
+def removeFiles(extension):
     for dirpath, dirnames, filenames in os.walk(settings.MEDIA_ROOT):
         for file in filenames:
-            if (fnmatch(file, '*.pdf')):
+            if (file.endswith(extension)):
                 os.remove(os.path.join(dirpath, file))
+
+
+def doctopdf(request):
+    res = {'status':False}
     if request.method == 'POST':
+        removeFiles(".docx")
         upload_file = request.FILES['word']
         fs = FileSystemStorage()
         fs.save(upload_file.name, upload_file)
         print('\n\nlocation is : ', fs.location)
 
+        res = DocxToPdf("/static/media")
         #storage.child(path_on_cloud+f"/{filename}").put(path)
 
-    return render(request, "pdfanddoc/wordtopdf.html")
+    return render(request, "pdfanddoc/wordtopdf.html", res)
     
 def providelink(request, id):
     if (request.method == 'GET'):

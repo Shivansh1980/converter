@@ -24,7 +24,6 @@ def DocxToPdf(current_doc_files):
                     res['url'] = None
     print("The dictonary is : ", res)
     return res
-DocxToPdf("/static/media")
 def __init__():
     if __name__ == "__main__":
         pass

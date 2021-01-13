@@ -1,9 +1,9 @@
 from django.db import models
 from converter.settings import MEDIA_ROOT
-from .storage import OverwriteStorage
+
 # Create your models here.
 class EncryptedFile(models.Model):
-    file = models.FileField(upload_to=MEDIA_ROOT)
+    file = models.FileField(upload_to=MEDIA_ROOT[1:]) #Starting from 1 because at begining / causeing problem
     useremail = models.EmailField(max_length=30)
     filename = models.CharField(max_length=20)
     key = models.CharField(max_length=300)
