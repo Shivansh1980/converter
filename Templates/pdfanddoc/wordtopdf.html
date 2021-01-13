@@ -7,15 +7,15 @@
 <div class="box">
     <h1>WORD TO PDF</h1>
     <div class="inputfields">
-        <form method="POST" class="post-form" enctype="multipart/form-data">
+        <form method="POST" action="{%url 'doctopdf'%}" class="post-form" enctype="multipart/form-data">
             {% csrf_token %}
             <input name="word" type="file"/>
             <button id="upload" type="submit">Convert</button>
         </form>
     </div>
     <div class="downloadpdf">
-        {%if url%}
-         <a href="{{url}}">Download</a>
+        {%if url is not none%}
+         <a href="{{url}}" download>Download</a>
         {%endif%}
     </div>
 </div>

@@ -23,8 +23,9 @@ def downloadFile(url,name="output.pdf"):
         # to a new file in binary mode.
         f.write(r.content)
 
-def DocxToPdf(current_doc_files):
-    res = {'status':None}
+def DocxToPdf(request,current_doc_files):
+    res = {'status':None,'url':None}
+    url = "http://"+request.get_host()
 
     current_doc_files = os.getcwd()+current_doc_files
     print("Converting Files In Dir : ", current_doc_files)
@@ -38,15 +39,22 @@ def DocxToPdf(current_doc_files):
                 try:
                     os.system(cmd)
                     res['status'] = True
-                    if (not os.path.exists("/static/media/" + name[0:len(name) - 5] + ".pdf")):
+                    outputpath = os.getcwd()+"/static/media/" + name[0:len(name) - 5] + ".pdf"
+                    print("Output Path : ", outputpath)
+                    if (not os.path.exists(outputpath)):
                         res['status'] = False
+                        print("path not exists")
                         return res
-                    res['url'] = "/static/media/"+name[0:len(name)-5]+".pdf"
+
+                    res['url'] = url+"/static/media/"+name[0:len(name)-5]+".pdf"
                     print("returning the url : " ,res['url'])
+
                 except Exception as ex:
                     print("--------Exception--------")
                     res['status'] = False
-    print("The dictonary is : ", res)
+                    res['url'] = None
+                    
+    removeFiles(".docx")
     return res
 
 
