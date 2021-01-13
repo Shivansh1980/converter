@@ -2,4 +2,5 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 def home(request):
-    return render(request,'Templates/homepage.html')
+    print('working')
+    return render(request,'homepage.html')
