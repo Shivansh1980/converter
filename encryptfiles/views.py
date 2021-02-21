@@ -14,6 +14,7 @@ from django.core.serializers import serialize
 from .forms import EncryptedFileForm, DecryptedFileForm
 from converter import settings
 from django.templatetags.static import static
+import glob
 
 path_to_media = settings.MEDIA_ROOT
 API_KEY = 1
@@ -26,7 +27,6 @@ def encrypthomepage(request):
     decryption_form = DecryptedFileForm()
     response_data['form'] = encryption_form
     response_data['decryption_form'] = decryption_form
-    removeFiles(path_to_media+'*')
     return render(request, 'encryption/encryptionhome.html',response_data)
 
 def getDecryptFileResult(request, file):
@@ -47,10 +47,19 @@ def decryptFileRequest(request):
         form = DecryptedFileForm(request.POST, request.FILES)
         if(form.is_valid()):
             file = request.FILES['file']
+            print("file structure : ", file)
             path = settings.MEDIA_ROOT + file.name
             # while (os.path.exists(path)):
             #     print("File Exists : ",path)
             #     os.remove(path)
+            userfiles = EncryptedFile.objects.all().filter(useremail=request.POST['useremail'])
+            for userfile in userfiles:
+                if(os.path.exists(userfile.path)):
+                    os.remove(userfile.path)
+                    print('file removed')
+                else:
+                    continue
+
             response_data = getDecryptFileResult(request, file)
             response_data['error'] = None
             response_data['errors'] = None
@@ -72,7 +81,7 @@ def getEncryptionResult(request, file):
     
     downloadUrl = str(f"http://{request.META['REMOTE_ADDR']}:{request.META['SERVER_PORT']}/static/media/{filename}")
     k = str(k)
-    result = {'downloadUrl': downloadUrl, 'key': k}
+    result = {'downloadUrl': downloadUrl, 'key': k, 'path':path}
     return result
 
 
@@ -83,21 +92,17 @@ def encryptFileRequest(request):
         form = EncryptedFileForm(request.POST, request.FILES)
         if form.is_valid():
             file = request.FILES['file']
+            print('file structure : ', file)
             path = settings.MEDIA_ROOT + file.name
             print(path)
-            while (os.path.exists(path)):
-                print("File Exists : ",path)
-                os.remove(path)
             encryptionResult = getEncryptionResult(request, file)
-
-            # encryptFile = EncryptedFile(
-            #     useremail=request.POST['useremail'],
-            #     key=encryptionResult['key'],
-            #     url=encryptionResult['downloadUrl'],
-            #     filename=file.name,
-            #     file=file
-            # )
-            # encryptFile.save()
+            encryptFile = EncryptedFile(
+                useremail=request.POST['useremail'],
+                key=encryptionResult['key'],
+                url=encryptionResult['downloadUrl'],
+                path=encryptionResult['path'],
+            )
+            encryptFile.save()
 
             result['msg'] = 'File Encryption Successfull'
             result['error'] = False
