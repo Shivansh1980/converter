@@ -44,6 +44,7 @@ def pdftodoc(request):
 
 
 def doctopdf(request):
+
     res = {'status':False}
     print(request.build_absolute_uri())
     print(request.get_host())
@@ -57,6 +58,7 @@ def doctopdf(request):
         res = DocxToPdf(request, "/static/media")
         print("Your Result : ",res)
         #storage.child(path_on_cloud+f"/{filename}").put(path)
+        print("You File Path : ",res)
 
     return render(request, "pdfanddoc/wordtopdf.html", res)
     
