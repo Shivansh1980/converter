@@ -1,0 +1,1 @@
+<form method="post" action="http://moodle.mitsgwalior.in/mod/quiz/startattempt.php" id="yui_3_17_2_1_1588415630889_229"><div id="yui_3_17_2_1_1588415630889_228"><input type="submit" value="Attempt quiz now" id="yui_3_17_2_1_1588415630889_227"><input type="hidden" name="cmid" value="29127"><input type="hidden" name="sesskey" value="BTynkI1DL0"></div></form>

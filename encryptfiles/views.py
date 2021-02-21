@@ -37,10 +37,9 @@ def getEncryptionResult(request, file):
     write_key()
     k = load_key()
     encryptFile(path, k)
-    downloadUrl = str(
-        f"http://{request.META['REMOTE_ADDR']}:{request.META['SERVER_PORT']}/static/media/{filename}")
-    result = {'downloadUrl': downloadUrl, 'key': k}
+    downloadUrl = str(f"http://{request.META['REMOTE_ADDR']}:{request.META['SERVER_PORT']}/static/media/{filename}")
 
+    result = {'downloadUrl': downloadUrl, 'key': k}
     return result
 
 
@@ -78,5 +77,5 @@ def fileEncryptGetRequest(request):
             result['errors'] = "Something Went Wrong"
             return JsonResponse(result)
     else:
-        return JsonResponse({'msg':'Request Was Not POST'})
-
+        return JsonResponse({'msg': 'Request Was Not POST'})
+        
