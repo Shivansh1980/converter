@@ -86,6 +86,7 @@ def encryptFile(filepath, key):
 
 def decryptFile(filepath, key):
     f = Fernet(key)
+    encrypted_data = None
     with open(filepath, "rb") as file:
         # read the encrypted data
         encrypted_data = file.read()

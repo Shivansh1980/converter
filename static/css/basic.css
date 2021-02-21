@@ -124,15 +124,26 @@ li,a,button{
     background-color: white;
     padding-bottom: 30px;
 }
+.decryption {
+    background-color: red;
+}
 .encryption button,input{
     font-size: 20px;
     padding: 5px;
     color: black;
 }
-.downloadButtonContainer{
+.decryption button,input{
+    font-size: 20px;
+    padding: 5px;
+    color: black;
+}
+.encryptedFileDownloadContainer{
     display: none;
 }
-#enc-download{
+.decryptedFileDownloadContainer{
+    display: none;
+}
+#enc-download, #dec-download{
     display: block;
     background-color:black;
     color: white;
@@ -156,6 +167,13 @@ li,a,button{
     }
 }
 #enc-download:hover{
+    display: block;
+    background-color:blue;
+    color: black;
+    font-size: 30px;
+    margin-top: 50px;
+}
+#dec-download:hover{
     display: block;
     background-color:blue;
     color: black;
