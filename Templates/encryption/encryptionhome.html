@@ -1,39 +1,43 @@
 {%extends 'basic.html'%}
 {%load static%}
-
+{%block style%}
+    <link rel="stylesheet" href="{%static 'css/encryptfiles.css'%}">
+{%endblock%}
 {%block main%}
-<div class="encryption">
-    <form id="encryption-form" method="POST" enctype="multipart/form-data" novalidate="">
-        {%csrf_token%}
-        <h1 align="center">Encrypt Your File</h1>
-        <div style="margin: 10px; margin-bottom:10px;">
-            <label for="" style="font-size: 25px;">Enter Your Email: </label>
-            {{form.useremail}}
-        </div>
+<div class="containers">
+    <div class="encryption">
+        <form id="encryption-form" method="POST" enctype="multipart/form-data" novalidate="">
+            {%csrf_token%}
+            <h1 align="center">Encrypt Your File</h1>
+            <div style="margin: 10px; margin-bottom:10px;">
+                <label for="" style="font-size: 25px;">Enter Your Email: </label>
+                {{form.useremail}}
+            </div>
 
-        {{form.file}}
-        <!-- <input id="submit" name="submit" type="submit" value="Encrypt"> -->
-        <input type="submit">
-    </form>
-    <div class="encryptedFileDownloadContainer">
-        <a id="enc-download" href="" download>Download</a>
+            {{form.file}}
+            <!-- <input id="submit" name="submit" type="submit" value="Encrypt"> -->
+            <input type="submit">
+        </form>
+        <div class="encryptedFileDownloadContainer">
+            <a id="enc-download" href="" download>Download</a>
+        </div>
     </div>
-</div>
-<div class="decryption">
-    <form id="decryption-form" method="POST" enctype="multipart/form-data" novalidate="">
-        {%csrf_token%}
-        <h1 align="center">Decrypt Your File</h1>
-        <div style="margin: 10px; margin-bottom:10px;">
-            <label for="" style="font-size: 25px;">Enter Your Key: </label>
-            {{decryption_form.key}}
-        </div>
+    <div class="decryption">
+        <form id="decryption-form" method="POST" enctype="multipart/form-data" novalidate="">
+            {%csrf_token%}
+            <h1 align="center">Decrypt Your File</h1>
+            <div style="margin: 10px; margin-bottom:10px;">
+                <label for="" style="font-size: 25px;">Enter Your Key: </label>
+                {{decryption_form.key}}
+            </div>
 
-        {{decryption_form.file}}
-        <!-- <input id="submit" name="submit" type="submit" value="Encrypt"> -->
-        <input type="submit">
-    </form>
-    <div class="decryptedFileDownloadContainer">
-        <a id="dec-download" href="" download>Download</a>
+            {{decryption_form.file}}
+            <!-- <input id="submit" name="submit" type="submit" value="Encrypt"> -->
+            <input type="submit">
+        </form>
+        <div class="decryptedFileDownloadContainer">
+            <a id="dec-download" href="" download>Download</a>
+        </div>
     </div>
 </div>
 {%endblock%}
@@ -61,7 +65,7 @@
                     $('.encryptedFileDownloadContainer').css("display","block");
                     $("#enc-download").attr("href",response.url);
                     alert(response.msg);
-                    alert(response.key)
+                    alert(response.key);
                 }
             },
             cache: false,
@@ -80,7 +84,7 @@
         }
         console.log(formData);
         $.ajax({
-            url: "{%url 'encryptfile'%}",
+            url: "{%url 'decryptfile'%}",
             data: formData,
             type: 'POST',
             success: function (response) {
@@ -88,8 +92,8 @@
                     alert(response.error);
                 }
                 else {
-                    $('.decryptedFileDownloadButton').css("display","block");
-                    $("#enc-download").attr("href",response.url);
+                    $('.decryptedFileDownloadContainer').css("display","block");
+                    $("#dec-download").attr("href",response.url);
                     alert(response.msg);
                 }
             },

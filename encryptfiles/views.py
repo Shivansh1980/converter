@@ -4,7 +4,7 @@ import os
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
 import json
-from .ConverterTools import write_key, load_key, encryptFile, decryptFile
+from .ConverterTools import write_key, load_key, encryptFile, decryptFile, removeFiles
 from .models import EncryptedFile
 from converter import settings
 from rest_framework.response import Response
@@ -26,22 +26,25 @@ def encrypthomepage(request):
     decryption_form = DecryptedFileForm()
     response_data['form'] = encryption_form
     response_data['decryption_form'] = decryption_form
+    removeFiles(path_to_media+'*')
     return render(request, 'encryption/encryptionhome.html',response_data)
 
 def getDecryptFileResult(request, file):
     fs = FileSystemStorage()
     filename = file.name
     path = path_to_media + filename
-    fs.save()
+    fs.save(filename, file)
     key = request.POST['key']
     decryptFile(path, key)
     print('path for decryption : ', path)
     url = str(f"http://{request.META['REMOTE_ADDR']}:{request.META['SERVER_PORT']}/static/media/{filename}")
-    return {'msg' : 'decryption success','downloadUrl': url}
-
+    return {'msg': 'decryption success', 'url': url}
+    
+@csrf_exempt
 def decryptFileRequest(request):
     response_data = None
-    if(request.method == "POST"):
+    if (request.method == "POST"):
+        form = DecryptedFileForm(request.POST, request.FILES)
         if(form.is_valid()):
             file = request.FILES['file']
             path = settings.MEDIA_ROOT + file.name
@@ -68,13 +71,14 @@ def getEncryptionResult(request, file):
     encryptFile(path, k)
     
     downloadUrl = str(f"http://{request.META['REMOTE_ADDR']}:{request.META['SERVER_PORT']}/static/media/{filename}")
+    k = str(k)
     result = {'downloadUrl': downloadUrl, 'key': k}
     return result
 
 
 @csrf_exempt
 def encryptFileRequest(request):
-    result = {'msg': '','error':None,'errors':'','url':None}
+    result = {'msg': '','error':None,'errors':'','url':None,'key':None}
     if (request.method == "POST"):
         form = EncryptedFileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -98,6 +102,7 @@ def encryptFileRequest(request):
             result['msg'] = 'File Encryption Successfull'
             result['error'] = False
             result['url'] = encryptionResult['downloadUrl']
+            result['key'] = encryptionResult['key']
             print('url to download : ',result['url'])
             return JsonResponse(result)
         else:

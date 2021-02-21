@@ -8,5 +8,10 @@ class EncryptedFile(models.Model):
     filename = models.CharField(max_length=20)
     key = models.CharField(max_length=300)
     url = models.CharField(max_length=100, null=True)
+
+class DecryptedFile(models.Model):
+    file = models.FileField(upload_to=MEDIA_ROOT[1:])
+    key = models.CharField(max_length=300)
+
     
 
