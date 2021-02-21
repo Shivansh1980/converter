@@ -11,8 +11,9 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from django.core.serializers import serialize
-from .forms import EncryptedFileForm
+from .forms import EncryptedFileForm, DecryptedFileForm
 from converter import settings
+from django.templatetags.static import static
 
 path_to_media = settings.MEDIA_ROOT
 API_KEY = 1
@@ -21,13 +22,41 @@ API_KEY = 1
 # Create your views here.
 def encrypthomepage(request):
     response_data = {'data': None, 'msg': None,  'downloadurl': None,'form':None}
-    form = EncryptedFileForm()
-    response_data['form'] = form
+    encryption_form = EncryptedFileForm()
+    decryption_form = DecryptedFileForm()
+    response_data['form'] = encryption_form
+    response_data['decryption_form'] = decryption_form
     return render(request, 'encryption/encryptionhome.html',response_data)
 
-def decryptTheFile(requesst):
-    response_data = {'data': None, 'msg': None, 'downloadurl': None}
-    
+def getDecryptFileResult(request, file):
+    fs = FileSystemStorage()
+    filename = file.name
+    path = path_to_media + filename
+    fs.save()
+    key = request.POST['key']
+    decryptFile(path, key)
+    print('path for decryption : ', path)
+    url = str(f"http://{request.META['REMOTE_ADDR']}:{request.META['SERVER_PORT']}/static/media/{filename}")
+    return {'msg' : 'decryption success','downloadUrl': url}
+
+def decryptFileRequest(request):
+    response_data = None
+    if(request.method == "POST"):
+        if(form.is_valid()):
+            file = request.FILES['file']
+            path = settings.MEDIA_ROOT + file.name
+            # while (os.path.exists(path)):
+            #     print("File Exists : ",path)
+            #     os.remove(path)
+            response_data = getDecryptFileResult(request, file)
+            response_data['error'] = None
+            response_data['errors'] = None
+            return JsonResponse(response_data)
+        else :
+            response_data['error'] = 'Please Provide Valid Input'
+            response_data['errors'] = 'Something Went Wrong On Your Side'
+            return response_data     
+
 def getEncryptionResult(request, file):
     fs = FileSystemStorage()
     filename = file.name
@@ -37,14 +66,14 @@ def getEncryptionResult(request, file):
     write_key()
     k = load_key()
     encryptFile(path, k)
+    
     downloadUrl = str(f"http://{request.META['REMOTE_ADDR']}:{request.META['SERVER_PORT']}/static/media/{filename}")
-
     result = {'downloadUrl': downloadUrl, 'key': k}
     return result
 
 
 @csrf_exempt
-def fileEncryptGetRequest(request):
+def encryptFileRequest(request):
     result = {'msg': '','error':None,'errors':'','url':None}
     if (request.method == "POST"):
         form = EncryptedFileForm(request.POST, request.FILES)
@@ -57,14 +86,14 @@ def fileEncryptGetRequest(request):
                 os.remove(path)
             encryptionResult = getEncryptionResult(request, file)
 
-            encryptFile = EncryptedFile(
-                useremail=request.POST['useremail'],
-                key=encryptionResult['key'],
-                url=encryptionResult['downloadUrl'],
-                filename=file.name,
-                file=file
-            )
-            encryptFile.save()
+            # encryptFile = EncryptedFile(
+            #     useremail=request.POST['useremail'],
+            #     key=encryptionResult['key'],
+            #     url=encryptionResult['downloadUrl'],
+            #     filename=file.name,
+            #     file=file
+            # )
+            # encryptFile.save()
 
             result['msg'] = 'File Encryption Successfull'
             result['error'] = False

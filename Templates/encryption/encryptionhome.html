@@ -3,7 +3,7 @@
 
 {%block main%}
 <div class="encryption">
-    <form id="ajax-form" method="POST" enctype="multipart/form-data" novalidate="">
+    <form id="encryption-form" method="POST" enctype="multipart/form-data" novalidate="">
         {%csrf_token%}
         <h1 align="center">Encrypt Your File</h1>
         <div style="margin: 10px; margin-bottom:10px;">
@@ -15,26 +15,25 @@
         <!-- <input id="submit" name="submit" type="submit" value="Encrypt"> -->
         <input type="submit">
     </form>
-    <div class="downloadButtonContainer">
+    <div class="encryptedFileDownloadContainer">
         <a id="enc-download" href="" download>Download</a>
     </div>
 </div>
-{% comment %} Do your changnes here {% endcomment %}
 <div class="decryption">
     <form id="decryption-form" method="POST" enctype="multipart/form-data" novalidate="">
         {%csrf_token%}
         <h1 align="center">Decrypt Your File</h1>
         <div style="margin: 10px; margin-bottom:10px;">
             <label for="" style="font-size: 25px;">Enter Your Key: </label>
-            {{decryption-form.key}}
+            {{decryption_form.key}}
         </div>
 
-        {{decryption-form.file}}
+        {{decryption_form.file}}
         <!-- <input id="submit" name="submit" type="submit" value="Encrypt"> -->
         <input type="submit">
     </form>
-    <div class="downloadButtonContainer">
-        <a id="enc-download" href="" download>Download</a>
+    <div class="decryptedFileDownloadContainer">
+        <a id="dec-download" href="" download>Download</a>
     </div>
 </div>
 {%endblock%}
@@ -42,7 +41,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
-    $('#ajax-form').submit(function (e) {
+    $('#encryption-form').submit(function (e) {
         e.preventDefault()
         $form = $(this)
         var formData = new FormData(this);
@@ -59,7 +58,37 @@
                     alert(response.error);
                 }
                 else {
-                    $('.downloadButtonContainer').css("display","block");
+                    $('.encryptedFileDownloadContainer').css("display","block");
+                    $("#enc-download").attr("href",response.url);
+                    alert(response.msg);
+                    alert(response.key)
+                }
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+        e.preventDefault()
+    });
+
+    $('#decryption-form').submit(function (e) {
+        e.preventDefault()
+        $form = $(this)
+        var formData = new FormData(this);
+        for (var f of formData){
+            console.log(f);
+        }
+        console.log(formData);
+        $.ajax({
+            url: "{%url 'encryptfile'%}",
+            data: formData,
+            type: 'POST',
+            success: function (response) {
+                if (response.error) {
+                    alert(response.error);
+                }
+                else {
+                    $('.decryptedFileDownloadButton').css("display","block");
                     $("#enc-download").attr("href",response.url);
                     alert(response.msg);
                 }
