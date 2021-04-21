@@ -14,6 +14,7 @@ from django.core.serializers import serialize
 from .forms import EncryptedFileForm, DecryptedFileForm
 from converter import settings
 from django.templatetags.static import static
+
 import glob
 
 path_to_media = settings.MEDIA_ROOT
@@ -49,17 +50,6 @@ def decryptFileRequest(request):
             file = request.FILES['file']
             print("file structure : ", file)
             path = settings.MEDIA_ROOT + file.name
-            # while (os.path.exists(path)):
-            #     print("File Exists : ",path)
-            #     os.remove(path)
-            userfiles = EncryptedFile.objects.all().filter(useremail=request.POST['useremail'])
-            for userfile in userfiles:
-                if(os.path.exists(userfile.path)):
-                    os.remove(userfile.path)
-                    print('file removed')
-                else:
-                    continue
-
             response_data = getDecryptFileResult(request, file)
             response_data['error'] = None
             response_data['errors'] = None
@@ -75,11 +65,12 @@ def getEncryptionResult(request, file):
     path = path_to_media + filename
 
     fs.save(filename, file)
+    print('file saved to ', fs.location)
     write_key()
     k = load_key()
     encryptFile(path, k)
     
-    downloadUrl = str(f"http://{request.META['REMOTE_ADDR']}:{request.META['SERVER_PORT']}/static/media/{filename}")
+    downloadUrl = static('media\\'+str(file.name))
     k = str(k)
     result = {'downloadUrl': downloadUrl, 'key': k, 'path':path}
     return result

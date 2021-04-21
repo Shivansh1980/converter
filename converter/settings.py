@@ -126,9 +126,13 @@ print("BASE DIRECTORY IS : ",BASE_DIR)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'static/media/')
 
+#staticfiles_dirs is where static files will be stored
+#static_root is where all static files will be stored after collectstatic command
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'collectedstatic/')
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 prod_db = dj_database_url.config(conn_max_age=500)
