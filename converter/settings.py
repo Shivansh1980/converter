@@ -26,7 +26,7 @@ SECRET_KEY = '#dtt#e0yop^^var^znbyvyu2m-^wua52v*fnof#*(a61)c-*5+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 #you have defined this hostname to provide the download url using ajax
 HOST_NAME = "127.0.0.1"
 
@@ -131,7 +131,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'static/media/')
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'collectedstatic/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'collectedstaticfiles')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 

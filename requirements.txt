@@ -7,3 +7,6 @@ pillow
 whitenoise
 djangorestframework
 cryptography
+gunicorn 
+dj-database-url
+psycopg2
