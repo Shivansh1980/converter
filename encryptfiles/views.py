@@ -38,7 +38,7 @@ def getDecryptFileResult(request, file):
     key = request.POST['key']
     decryptFile(path, key)
     print('path for decryption : ', path)
-    url = str(f"http://{request.META['REMOTE_ADDR']}:{request.META['SERVER_PORT']}/static/media/{filename}")
+    url = static('media/'+str(file.name))
     return {'msg': 'decryption success', 'url': url}
     
 @csrf_exempt
@@ -68,12 +68,16 @@ def getEncryptionResult(request, file):
     print('file saved to ', fs.location)
     write_key()
     k = load_key()
-    encryptFile(path, k)
-    
-    downloadUrl = static('media\\'+str(file.name))
-    k = str(k)
-    result = {'downloadUrl': downloadUrl, 'key': k, 'path':path}
-    return result
+    try:
+        encryptFile(path, k)
+        downloadUrl = static('media/'+str(file.name))
+        k = str(k)
+        result = {'downloadUrl': downloadUrl, 'key': k, 'path': path, 'error':False}
+        return result
+    except:
+        result = {'downloadUrl': None, 'key': None, 'path': None, 'error':'file path cannot be found at server'}
+        return JsonResponse(result)
+
 
 
 @csrf_exempt

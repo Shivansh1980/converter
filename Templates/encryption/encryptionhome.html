@@ -23,6 +23,7 @@
         </div>
     </div>
     <div class="decryption">
+        <div class="loading"></div>
         <form id="decryption-form" method="POST" enctype="multipart/form-data" novalidate="">
             {%csrf_token%}
             <h1 align="center">Decrypt Your File</h1>
@@ -46,9 +47,11 @@
 {%endblock%}
 {%block javascript%}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+<script src="{%static 'js/tools.js'%}"></script>
 <script>
+    initializeLoadingScreen("loading");
     $('#encryption-form').submit(function (e) {
+        show_loading_screen();
         e.preventDefault()
         $form = $(this)
         var formData = new FormData(this);
@@ -62,9 +65,11 @@
             type: 'POST',
             success: function (response) {
                 if (response.error) {
+                    hide_loading_screen();
                     alert(response.error);
                 }
                 else {
+                    hide_loading_screen();
                     $('.encryptedFileDownloadContainer').css("display","block");
                     $("#enc-download").attr("href",response.url);
                     alert(response.msg)
@@ -79,6 +84,7 @@
     });
 
     $('#decryption-form').submit(function (e) {
+        show_loading_screen();
         e.preventDefault()
         $form = $(this)
         var formData = new FormData(this);
@@ -92,9 +98,11 @@
             type: 'POST',
             success: function (response) {
                 if (response.error) {
+                    hide_loading_screen();
                     alert(response.error);
                 }
                 else {
+                    hide_loading_screen();
                     $('.decryptedFileDownloadContainer').css("display","block");
                     $("#dec-download").attr("href",response.url);
                     alert(response.msg);
