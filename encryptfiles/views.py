@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 import os
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, FileResponse
 import json
 from .ConverterTools import write_key, load_key, encryptFile, decryptFile, removeFiles
 from .models import EncryptedFile
@@ -12,7 +12,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from django.core.serializers import serialize
 from .forms import EncryptedFileForm, DecryptedFileForm
-from converter import settings
+from encryptfiles.ConverterTools import removeFile
 from django.templatetags.static import static
 
 import glob
@@ -33,12 +33,14 @@ def encrypthomepage(request):
 def getDecryptFileResult(request, file):
     fs = FileSystemStorage()
     filename = file.name
+    removeFile(filename)
     path = path_to_media + filename
+    print('saving file to : ', path)
     fs.save(filename, file)
     key = request.POST['key']
     decryptFile(path, key)
     print('path for decryption : ', path)
-    url = static('media/'+str(file.name))
+    url = static('media/'+filename)
     return {'msg': 'decryption success', 'url': url}
     
 @csrf_exempt
@@ -72,11 +74,11 @@ def getEncryptionResult(request, file):
         encryptFile(path, k)
         downloadUrl = static('media/'+str(file.name))
         k = str(k)
-        result = {'downloadUrl': downloadUrl, 'key': k, 'path': path, 'error':False}
+        result = {'downloadUrl': downloadUrl, 'key': k, 'path': path}
         return result
     except:
-        result = {'downloadUrl': None, 'key': None, 'path': None, 'error':'file path cannot be found at server'}
-        return JsonResponse(result)
+        result = {'downloadUrl': None, 'key': None, 'path': None, 'error':True}
+        return result
 
 
 
@@ -89,8 +91,8 @@ def encryptFileRequest(request):
             file = request.FILES['file']
             print('file structure : ', file)
             path = settings.MEDIA_ROOT + file.name
-            print(path)
             encryptionResult = getEncryptionResult(request, file)
+
             encryptFile = EncryptedFile(
                 useremail=request.POST['useremail'],
                 key=encryptionResult['key'],
@@ -98,7 +100,7 @@ def encryptFileRequest(request):
                 path=encryptionResult['path'],
             )
             encryptFile.save()
-
+            name, ext = os.path.splitext(file.name)
             result['msg'] = 'File Encryption Successfull'
             result['error'] = False
             result['url'] = encryptionResult['downloadUrl']
@@ -112,4 +114,3 @@ def encryptFileRequest(request):
             return JsonResponse(result)
     else:
         return JsonResponse({'msg': 'Request Was Not POST'})
-        

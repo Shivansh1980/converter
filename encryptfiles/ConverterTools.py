@@ -64,6 +64,12 @@ def removeFiles(extension):
             if (file.endswith(extension)):
                 os.remove(os.path.join(dirpath, file))
 
+def removeFile(filename):
+    for dirpath, dirnames, filenames in os.walk(settings.MEDIA_ROOT):
+        for file in filenames:
+            if (file == filename):
+                os.remove(os.path.join(dirpath, file))
+
 
 def write_key():
     key = Fernet.generate_key()
