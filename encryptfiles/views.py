@@ -2,7 +2,7 @@ from django.shortcuts import render
 import os
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse, FileResponse
-from .ConverterTools import write_key, load_key, encrypt_file, decrypt_file, remove_file, get_correct_key
+from converter.ConverterTools import write_key, load_key, encrypt_file, decrypt_file, remove_file, get_correct_key
 from .models import EncryptedFile
 from .forms import EncryptedFileForm
 from django.templatetags.static import static
@@ -30,10 +30,19 @@ def decrypt_file_request(request):
             key = get_correct_key(request.POST['key'])
             try:
                 encrypted_file = EncryptedFile.objects.get(key=key)
+                url = request.build_absolute_uri('/media/'+encrypted_file.my_file.name)
+                if(encrypted_file.is_decrypted):
+                    return JsonResponse({
+                        'status':'error',
+                        'error':True,
+                        'error_msg':'This file already been decrypted cannot be decrypted again',
+                        'url':url
+                    })
                 print('file name : ', encrypted_file.my_file.name)
                 filepath = path_to_media + encrypted_file.my_file.name
                 decrypt_file(filepath, key)
-                url = request.build_absolute_uri('/media/'+encrypted_file.my_file.name)
+                encrypted_file.is_decrypted = True
+                encrypted_file.save()
                 return JsonResponse({
                     'msg':'file decrypted successfully',
                     'url': url,

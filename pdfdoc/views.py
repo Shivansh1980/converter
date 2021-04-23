@@ -4,27 +4,12 @@ from django.http import HttpResponse, JsonResponse
 from django.core.files.storage import FileSystemStorage
 import os
 import time
-from encryptfiles.ConverterTools import DocxToPdf , remove_files
+from converter.ConverterTools import DocxToPdf , remove_files
 from converter import settings
 import threading
 import time
 from fnmatch import fnmatch
 
-config = {
-    'apiKey': "AIzaSyBwRxD6o8eC5FNDBIpW0wmawafM13pCXho",
-    'authDomain': "converter-b30ab.firebaseapp.com",
-    'projectId': "converter-b30ab",
-    'databaseURL':"https://converter-b30ab.firebaseio.com",
-    'storageBucket': "converter-b30ab.appspot.com",
-    'messagingSenderId': "850133980369",
-    'appId': "1:850133980369:web:531c1148c41b0db30ae1f0",
-    'measurementId': "G-YQ3YVHVQYR"
-}
-
-firebase = pyrebase.initialize_app(config)
-auth = firebase.auth()
-
-storage = firebase.storage()
 path_on_cloud = "images"
 path_on_local = settings.MEDIA_ROOT
 
@@ -57,7 +42,6 @@ def doctopdf(request):
 
         res = DocxToPdf(request, "/static/media")
         print("Your Result : ",res)
-        #storage.child(path_on_cloud+f"/{filename}").put(path)
         print("You File Path : ",res)
 
     return render(request, "pdfanddoc/wordtopdf.html", res)

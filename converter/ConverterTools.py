@@ -5,22 +5,14 @@ from converter import settings
 
 #The Below Api is from url : https://portal.api2pdf.com/
 
-def downloadFile(url,name="output.pdf"):
+def download_file(url,name="output.pdf"):
     file_url = url
-    if not name.endswith(".pdf"):
-        name += ".pdf"
     # URL of the image to be downloaded is defined as image_url
     r = requests.get(file_url)  # create HTTP response object
 
     # send a HTTP request to the server and save
     # the HTTP response in a response object called r
-    with open(name, 'wb') as f:
-
-        # Saving received content as a pdf file in
-        # binary format
-
-        # write the contents of the response (r.content)
-        # to a new file in binary mode.
+    with open(settings.MEDIA_ROOT+name, 'wb') as f:
         f.write(r.content)
 
 def DocxToPdf(request,current_doc_files):

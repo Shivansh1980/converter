@@ -7,5 +7,6 @@ class EncryptedFile(models.Model):
     my_file = models.FileField(upload_to=MEDIA_ROOT[1:]) #Starting from 1 because at begining /(slash) causing problem but initial / works in linux
     key = models.CharField(max_length=300, primary_key=True)
     url = models.CharField(max_length=100, null=True)
+    is_decrypted = models.BooleanField(default=False)
     
 
