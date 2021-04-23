@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='encryptedfile',
             name='useremail',
-            field=models.EmailField(default=django.utils.timezone.now, max_length=30),
+            field=models.EmailField(default=django.utils.timezone.now, max_length=50),
             preserve_default=False,
         ),
         migrations.AlterField(
