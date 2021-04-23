@@ -22,6 +22,23 @@
             <a id="enc-download" href="" download>Download</a>
         </div>
     </div>
+
+    <div class="decryption">
+        <div class="loading"></div>
+        <form id="decryption-form" method="POST" enctype="multipart/form-data" novalidate="">
+            {%csrf_token%}
+            <h1 align="center">Decrypt Your File</h1>
+            <div>
+                <label for="key" style="font-size: 25px;">Enter File Key: </label>
+                <input id="key" name="key" type="text">
+            </div>
+            <input id="decrypt_button" type="submit">
+        </form>
+        <div class="decryptedFileDownloadContainer">
+            <a id="dec-download" href="" download>Download</a>
+        </div>
+    </div>
+
 </div>
     {%endblock%}
     {%block javascript%}
@@ -45,14 +62,14 @@
                 success: function (response) {
                     if (response.error) {
                         hide_loading_screen();
-                        alert(response.msg);
+                        alert(response.error_msg);
                     }
                     else {
                         hide_loading_screen();
                         $('.encryptedFileDownloadContainer').css("display", "block");
-                        var response = JSON.parse(response); 
-                        console.log(response);
-                        $("#enc-download").attr("href", `{%static 'media/${response[0].fields.my_file}'%}`);
+                        $("#enc-download").attr("href", response.url);
+                        alert('Use this key to decrypt you file : '+ response.key)
+                        console.log(response.key)
                     }
                 },
                 cache: false,
@@ -61,6 +78,34 @@
             });
             e.preventDefault()
         });
+        $('#decryption-form').submit(function (e) {
+                show_loading_screen();
+                e.preventDefault()
+                var key = document.getElementById('key')
+                var form_data = new FormData(this)
+                $.ajax({
+                    url: "{%url 'decryptfile'%}",
+                    data: form_data,
+                    type: 'POST',
+                    success: function (response) {
+                        alert('got success response')
+                        console.log(response)
+                        if (response.error) {
+                            hide_loading_screen();
+                            alert(response.error_msg);
+                        }
+                        else {
+                            hide_loading_screen();
+                            $('.decryptedFileDownloadContainer').css("display", "block");
+                            $("#dec-download").attr("href", response.url);
+                        }
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+                e.preventDefault()
+            });
     </script>
     {%endblock%}
     <!-- <div class="decryption">
