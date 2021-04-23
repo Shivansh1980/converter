@@ -4,7 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.core.files.storage import FileSystemStorage
 import os
 import time
-from encryptfiles.ConverterTools import DocxToPdf , removeFiles
+from encryptfiles.ConverterTools import DocxToPdf , remove_files
 from converter import settings
 import threading
 import time

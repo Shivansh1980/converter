@@ -54,17 +54,17 @@ def DocxToPdf(request,current_doc_files):
                     res['status'] = False
                     res['url'] = None
                     
-    removeFiles(".docx")
+    remove_files(".docx")
     return res
 
 
-def removeFiles(extension):
+def remove_files(extension):
     for dirpath, dirnames, filenames in os.walk(settings.MEDIA_ROOT):
         for file in filenames:
             if (file.endswith(extension)):
                 os.remove(os.path.join(dirpath, file))
 
-def removeFile(filename):
+def remove_file(filename):
     for dirpath, dirnames, filenames in os.walk(settings.MEDIA_ROOT):
         for file in filenames:
             if (file == filename):
@@ -81,7 +81,7 @@ def load_key():
     return open("key.key", "rb").read()
 
 
-def encryptFile(filepath, key):
+def encrypt_file(filepath, key):
     f = Fernet(key)
     with open(filepath, "rb") as file:
         # read all file data
@@ -90,7 +90,7 @@ def encryptFile(filepath, key):
     with open(filepath, "wb") as file:
         file.write(encrypted_data)
 
-def decryptFile(filepath, key):
+def decrypt_file(filepath, key):
     f = Fernet(key)
     encrypted_data = None
     with open(filepath, "rb") as file:
@@ -101,6 +101,13 @@ def decryptFile(filepath, key):
     # write the original file
     with open(filepath, "wb") as file:
         file.write(decrypted_data)
+
+def get_correct_key(key):
+    key = str(key)
+    if(key.startswith("b'") and key.endswith("'")):
+        key = key[2:]
+        key = key[:-1]
+    return key
 
 def __init__():
     if __name__ == "__main__":

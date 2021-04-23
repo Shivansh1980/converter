@@ -1,116 +1,148 @@
 from django.shortcuts import render
-from django.core.files.storage import FileSystemStorage
 import os
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse, FileResponse
-import json
-from .ConverterTools import write_key, load_key, encryptFile, decryptFile, removeFiles
+from .ConverterTools import write_key, load_key, encrypt_file, decrypt_file, remove_file, get_correct_key
 from .models import EncryptedFile
-from converter import settings
-from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
-from django.core.serializers import serialize
-from .forms import EncryptedFileForm, DecryptedFileForm
-from encryptfiles.ConverterTools import removeFile
+from .forms import EncryptedFileForm
 from django.templatetags.static import static
-
-import glob
+from django.contrib.staticfiles.storage import staticfiles_storage
+from converter import settings
+from encryptfiles.serializers import EncryptedFileSerializer
+from django.core import serializers
 
 path_to_media = settings.MEDIA_ROOT
 API_KEY = 1
 
 
 # Create your views here.
-def encrypthomepage(request):
-    response_data = {'data': None, 'msg': None,  'downloadurl': None,'form':None}
+def encrypt_homepage(request):
+    response_data = {'data': None, 'msg': None,
+                     'downloadurl': None, 'form': None}
     encryption_form = EncryptedFileForm()
-    decryption_form = DecryptedFileForm()
     response_data['form'] = encryption_form
-    response_data['decryption_form'] = decryption_form
-    return render(request, 'encryption/encryptionhome.html',response_data)
+    return render(request, 'encryption/encryptionhome.html', response_data)
 
-def getDecryptFileResult(request, file):
-    fs = FileSystemStorage()
-    filename = file.name
-    removeFile(filename)
-    path = path_to_media + filename
-    print('saving file to : ', path)
-    fs.save(filename, file)
-    key = request.POST['key']
-    decryptFile(path, key)
-    print('path for decryption : ', path)
-    url = static('media/'+filename)
-    return {'msg': 'decryption success', 'url': url}
-    
 @csrf_exempt
-def decryptFileRequest(request):
-    response_data = None
-    if (request.method == "POST"):
-        form = DecryptedFileForm(request.POST, request.FILES)
-        if(form.is_valid()):
-            file = request.FILES['file']
-            print("file structure : ", file)
-            path = settings.MEDIA_ROOT + file.name
-            response_data = getDecryptFileResult(request, file)
-            response_data['error'] = None
-            response_data['errors'] = None
-            return JsonResponse(response_data)
-        else :
-            response_data['error'] = 'Please Provide Valid Input'
-            response_data['errors'] = 'Something Went Wrong On Your Side'
-            return response_data     
+def decrypt_file_request(request):
+    if(request.method == 'POST'):
+        try:
+            key = get_correct_key(request.POST['key'])
+            try:
+                encrypted_file = EncryptedFile.objects.get(key=key)
+                print('file name : ', encrypted_file.my_file.name)
+                filepath = path_to_media + encrypted_file.my_file.name
+                decrypt_file(filepath, key)
+                url = request.build_absolute_uri('/media/'+encrypted_file.my_file.name)
+                return JsonResponse({
+                    'msg':'file decrypted successfully',
+                    'url': url,
+                    'error': False,
+                    'status': 'success'
+                })
 
-def getEncryptionResult(request, file):
-    fs = FileSystemStorage()
-    filename = file.name
-    path = path_to_media + filename
-
-    fs.save(filename, file)
-    print('file saved to ', fs.location)
-    write_key()
-    k = load_key()
-    try:
-        encryptFile(path, k)
-        downloadUrl = static('media/'+str(file.name))
-        k = str(k)
-        result = {'downloadUrl': downloadUrl, 'key': k, 'path': path}
-        return result
-    except:
-        result = {'downloadUrl': None, 'key': None, 'path': None, 'error':True}
-        return result
-
+            except Exception as e:
+                return JsonResponse({
+                    'msg': 'File with this key does not exist on server',
+                    'error': True,
+                    'error_msg': str(e)
+                })
+        except Exception as e:
+            return JsonResponse({
+                'msg':'please post data with key to decrypt the file',
+                'error':True,
+                'error_msg':str(e)
+            })
 
 
 @csrf_exempt
-def encryptFileRequest(request):
-    result = {'msg': '','error':None,'errors':'','url':None,'key':None}
-    if (request.method == "POST"):
+def encrypt_file_request(request):
+    if(request.method == 'POST'):
         form = EncryptedFileForm(request.POST, request.FILES)
         if form.is_valid():
-            file = request.FILES['file']
-            print('file structure : ', file)
-            path = settings.MEDIA_ROOT + file.name
-            encryptionResult = getEncryptionResult(request, file)
+            try:
+                my_file = request.FILES['my_file']
+                write_key()
+                k = load_key()
 
-            encryptFile = EncryptedFile(
-                useremail=request.POST['useremail'],
-                key=encryptionResult['key'],
-                url=encryptionResult['downloadUrl'],
-                path=encryptionResult['path'],
-            )
-            encryptFile.save()
-            name, ext = os.path.splitext(file.name)
-            result['msg'] = 'File Encryption Successfull'
-            result['error'] = False
-            result['url'] = encryptionResult['downloadUrl']
-            result['key'] = encryptionResult['key']
-            print('url to download : ',result['url'])
-            return JsonResponse(result)
+                k = get_correct_key(k)
+                
+                new_file = EncryptedFile(
+                    username=form.cleaned_data['username'],
+                    my_file=my_file,
+                    key=k
+                )
+                new_file.save()
+
+                #encrypting the file
+                file_path = path_to_media + new_file.my_file.name
+                encrypt_file(file_path,k)
+                
+                url = request.build_absolute_uri('/media/'+new_file.my_file.name)
+
+                return JsonResponse({
+                    'key':k,
+                    'url':url,
+                    'error':False,
+                    'status':'success'
+                })
+
+            except Exception as e:
+                return JsonResponse({
+                    'status':'Internal Server Error',
+                    'msg':str(e),
+                    'error':True,
+                    'error_msg':str(e)          
+                })
         else:
-            result['msg'] = "Wrong Input Provided"
-            result['error'] = True
-            result['errors'] = "Something Went Wrong"
-            return JsonResponse(result)
+            return JsonResponse({
+                'status':'error',
+                'error': True, 
+                'error_msg':form.errors
+                })
+
+@csrf_exempt
+def delete_all_files(request):
+    if(request.method == 'DELETE'):
+        files = EncryptedFile.objects.all()
+        for f in files:
+            f.my_file.delete()
+            f.delete()
+        return JsonResponse({
+            'status': 'success',
+            'msg':'all files has been deleted',
+            'error':False
+        })
     else:
-        return JsonResponse({'msg': 'Request Was Not POST'})
+        return JsonResponse({'error_msg': 'please  make delete request for deleting a file', 'error': True})
+
+@csrf_exempt
+def delete_file(request, key):
+    key = get_correct_key(key)
+    if(request.method == 'DELETE'):
+        try:
+            encrypted_file = EncryptedFile.objects.get(key=key)
+            encrypted_file.delete()
+            return JsonResponse({'msg':'file deleted successfully', 'error':False})
+        except Exception as e:
+            return JsonResponse({
+                'error':True,
+                'error_msg': 'file not exists on server'
+            })
+    else:
+        return JsonResponse({ 
+            'error': True,
+            'error_msg': 'please  make delete request for deleting a file'
+        })
+
+@csrf_exempt
+def is_file_exists(request, key):
+    key = get_correct_key(key)
+    if(request.method == 'GET'):
+        try:
+            encrypted_file = EncryptedFile.objects.get(key=key)
+            return JsonResponse({'status': 'success',  'msg': 'file exists on server', 'error': False, 'is_exist': True})
+        except Exception as e:
+            return JsonResponse({'status': 'success',  'msg': 'file does on exists on server', 'error': False, 'is_exist': False})
+    else:
+        return JsonResponse({'status':'error', 'error_msg': 'please make get request for it', 'error': True})
