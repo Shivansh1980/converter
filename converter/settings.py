@@ -22,8 +22,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = '#dtt#e0yop^^var^znbyvyu2m-^wua52v*fnof#*(a61)c-*5+'
-#SECRET_KEY = os.environ.get('SECRET_KEY')
+# SECRET_KEY = '#dtt#e0yop^^var^znbyvyu2m-^wua52v*fnof#*(a61)c-*5+'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -78,22 +78,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'converter.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'd6ug859ffbr7f5',
-#         'HOST': 'ec2-34-233-0-64.compute-1.amazonaws.com',
-#         'PORT': 5432,
-#         'USER': 'lljgyfdhplamvj',
-#         'PASSWORD': '81917591bfbe1c89dcfbd37d00e1eb93e22d510034ff1a731c2c65c9ced17917'
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'd6ug859ffbr7f5',
+        'HOST': 'ec2-34-233-0-64.compute-1.amazonaws.com',
+        'PORT': 5432,
+        'USER': 'lljgyfdhplamvj',
+        'PASSWORD': '81917591bfbe1c89dcfbd37d00e1eb93e22d510034ff1a731c2c65c9ced17917'
+    }
+}
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
