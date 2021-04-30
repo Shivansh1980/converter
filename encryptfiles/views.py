@@ -101,7 +101,7 @@ def encrypt_file_request(request):
                     'status':'Internal Server Error',
                     'msg':str(e),
                     'error':True,
-                    'error_msg':str(e)          
+                    'error_msg':str(e)        
                 })
         else:
             return JsonResponse({
@@ -109,6 +109,12 @@ def encrypt_file_request(request):
                 'error': True, 
                 'error_msg':form.errors
                 })
+    else:
+        return JsonResponse({
+            'status':'error',
+            'error': True, 
+            'error_msg':"please make POST request with username and file"
+        })
 
 @csrf_exempt
 def delete_all_files(request):
