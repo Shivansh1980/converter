@@ -1,24 +1,31 @@
 .containers{
+    display: grid;
+    flex-direction: column;
+}
+#encryption_form{
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#id_my_file {
+    text-align: center;
+    align-content: center;
 }
 .encryption, .decryption{
-    display: flex;
-    flex-direction: column;
+    display: grid;
     justify-content: center;
     align-items: center;
-    align-self: center;
     background-color: white;
-    padding-bottom: 30px;
-    margin-top: 50px;
-    width: 80vw;
+    margin: 10px;
 }
-.encryption button,input{
+.encryption button,.decryption button{
     font-size: 20px;
     padding: 5px;
     color: black;
 }
-.decryption button,input{
+input{
+    display: block;
     font-size: 20px;
     padding: 5px;
     color: black;
@@ -29,9 +36,10 @@
 .decryptedFileDownloadContainer{
     display: none;
 }
-#enc-download, #dec-download{
+#enc_download, #dec_download{
     display: block;
     background-color:black;
+    text-align: center;
     color: white;
     font-size: 30px;
     margin-top: 50px;
@@ -52,14 +60,14 @@
 
     }
 }
-#enc-download:hover{
+#enc_download:hover{
     display: block;
     background-color:blue;
     color: black;
     font-size: 30px;
     margin-top: 50px;
 }
-#dec-download:hover{
+#dec_download:hover{
     display: block;
     background-color:blue;
     color: black;
