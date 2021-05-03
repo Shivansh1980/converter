@@ -19,3 +19,17 @@ function hide_loading_screen() {
         'visibility':'hidden'
     });
 }
+
+function show_key() {
+    $('#key_box').css({
+        'display': 'block',
+        'visibility':'visible'
+    })
+}
+
+function hide_key() {
+    $('#key_box').css({
+        'visibility': 'hidden',
+        'display':'none'
+    })
+}

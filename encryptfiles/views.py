@@ -33,8 +33,8 @@ def decrypt_file_request(request):
                 url = request.build_absolute_uri('/media/'+encrypted_file.my_file.name)
                 if(encrypted_file.is_decrypted):
                     return JsonResponse({
-                        'status':'error',
-                        'error':True,
+                        'status':'Success',
+                        'error':False,
                         'error_msg':'This file already been decrypted cannot be decrypted again',
                         'url':url
                     })
@@ -85,7 +85,6 @@ def encrypt_file_request(request):
 
                 #encrypting the file
                 file_path = path_to_media + new_file.my_file.name
-                
                 encrypt_file(file_path,k)
                 
                 url = request.build_absolute_uri('/media/'+new_file.my_file.name)

@@ -32,6 +32,7 @@ input{
 }
 .encryptedFileDownloadContainer{
     display: none;
+    margin-bottom: 10px;
 }
 .decryptedFileDownloadContainer{
     display: none;
@@ -82,7 +83,7 @@ input{
   display: none;
   align-items: center;
   justify-content: center;
-  position: relative;
+  position: relativ;
   width: 120px;
   height: 120px;
   visibility: hidden;
@@ -122,4 +123,30 @@ input{
   80%,100%{
     transform: scale(0);
   }
+}
+
+#key_box {
+    visibility: hidden;
+    font-weight: bolder;
+    border-radius: 20%;
+    box-shadow: 0 0 30px black;
+    padding:10px;
+    width: auto;
+    max-height: 300px;
+    background-color:lightblue;
+    color:green;
+    font-size:20px;
+    text-align:center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+#close_key_box{
+    position: relative;
+    left: 40%;
+    border-radius:20%;
+    top:0px;
+    padding: 2px;
+    color: red;
 }

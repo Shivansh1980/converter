@@ -5,6 +5,7 @@
 {%endblock%}
 {%block main%}
 <div class="containers">
+    <div id="key_box"><button id="close_key_box" onClick="hide_key()">close</button><br><span style="color: black;">Copy this key For Decrypt:<br><br></span></div>
     <div class="encryption">
         <form id="encryption_form" method="POST" enctype="multipart/form-data" novalidate="">
             {%csrf_token%}
@@ -35,7 +36,7 @@
             <input id="decrypt_button" type="submit">
         </form>
         <div class="decryptedFileDownloadContainer">
-            <a id="dec_download" href="" download>Download</a>
+            <a id="dec_download" download>Download</a>
         </div>
     </div>
 
@@ -46,6 +47,7 @@
     <script src="{%static 'js/tools.js'%}"></script>
     <script>
         initializeLoadingScreen("loading");
+        
         $('#encryption_form').submit(function (e) {
             show_loading_screen();
             e.preventDefault()
@@ -64,13 +66,15 @@
                     if (response.error) {
                         hide_loading_screen();
                         alert(response.error_msg);
+                        hide_key();
                     }
                     else {
                         hide_loading_screen();
                         $('.encryptedFileDownloadContainer').css("display", "block");
                         $("#enc_download").attr("href", response.url);
-                        alert('Use this key to decrypt you file : '+ response.key)
-                        console.log(response.key)
+                        $('#key_box').append(response.key);
+                        $('#key_box').append("<br><br><span style='color:black;'>You can copy this key only one time.</span>");
+                        show_key();
                     }
                 },
                 cache: false,
