@@ -24,4 +24,5 @@ urlpatterns = [
     path('',views.home,name='home'),
     path('pdfdoc/', include('pdfdoc.urls')),
     path('encryptfiles/',include('encryptfiles.urls')),
+    path('sendmail/', views.send_email, name='sendemail'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
