@@ -73,7 +73,6 @@ def encrypt_file_request(request):
                 my_file = request.FILES['my_file']
                 write_key()
                 k = load_key()
-
                 k = get_correct_key(k)
                 
                 new_file = EncryptedFile(
